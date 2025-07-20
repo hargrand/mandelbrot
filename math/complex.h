@@ -45,8 +45,10 @@ extern struct complex mul(struct complex x, struct complex y);
 /// Divide one complex value by another and return the quotient
 /// </summary>
 /// <param name="x">Left operand (numerator) of the division operation</param>
-/// <param name="y">Right operand (denominator) of the division operation</param>
-/// <returns>Complex value representing the qutient when x is divided by y</returns>
+/// <param name="y">Right operand (denominator) of the division operation
+/// </param>
+/// <returns>Complex value representing the qutient when x is divided by y
+/// </returns>
 extern struct complex div(struct complex x, struct complex y);
 
 /// <summary>
@@ -72,11 +74,22 @@ extern double mag(struct complex z);
 
 /// <summary>
 /// Compute and return the argument of the given complex number, which is
-/// the angle in the comlplex plane of the number relative to the positive
-/// real axis.
+/// the angle in radians in the comlplex plane of the number relative to
+/// the positive real axis.
 /// </summary>
 /// <param name="z">Number to compute the argument of</param>
 /// <returns>Argument of the complex number given</returns>
 extern double arg(struct complex z);
+
+/// <summary>
+/// Construct a complex number from its arg and mag values
+/// </summary>
+/// <param name="arg">Angle in radians of the position of the complex value
+/// relative to the positive real axis</param>
+/// <param name="mag">Distance the complex is from the origin of the complex
+/// plane</param>
+/// <returns>The complex value derived from the given arg (angle in radians)
+/// and mag (distance from the origin) </returns>
+extern struct complex from_polar(double arg, double mag);
 
 #endif
