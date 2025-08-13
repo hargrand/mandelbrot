@@ -120,42 +120,7 @@ void test_div(struct result_struct* results, bool verbose)
 	}
 }
 
-void test_sub(struct result_struct* results, bool verbose)
-{
-
-}
-
-void test_mul(struct result_struct* results, bool verbose)
-{
-
-}
-
-void test_div(struct result_struct* results, bool verbose)
-{
-
-}
-
 void test_conj(struct result_struct* results, bool verbose)
-{
-
-}
-
-void test_mag2(struct result_struct* results, bool verbose)
-{
-
-}
-
-void test_mag(struct result_struct* results, bool verbose)
-{
-
-}
-
-void test_arg(struct result_struct* results, bool verbose)
-{
-
-}
-
-void test_from_polar(struct result_struct* results, bool verbose)
 {
 
 }

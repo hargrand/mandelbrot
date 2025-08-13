@@ -19,14 +19,21 @@ struct complex sub(struct complex x, struct complex y)
 
 struct complex mul(struct complex x, struct complex y)
 {
-	struct complex return_value = { x.re * y.re, x.im * y.im };
+	struct complex return_value = { 
+		x.re * y.re - x.im * y.im,   // (ac - bd)
+		x.re * y.im + x.im * y.re    // (ad + bc)i
+	};
 
 	return return_value;
 }
 
 struct complex div(struct complex x, struct complex y)
 {
-	struct complex return_value = { x.re / y.re, x.im / y.im };
+	double denom = y.re * y.re + y.im * y.im;  // c^2 + d^2
+	struct complex return_value = { 
+		(x.re * y.re + x.im * y.im) / denom,   // (ac + bd)  /denom
+		(x.im * y.re - x.re * y.im) / denom    // (bc - ad)i /denom
+	};
 
 	return return_value;
 }
