@@ -11,4 +11,5 @@ int main()
 	test_sub(&results, true);
 	test_mul(&results, true);
 	test_div(&results, true);
+	test_conj(&results, true);
 }

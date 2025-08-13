@@ -35,7 +35,7 @@ void test_add(struct result_struct* results, bool verbose)
 			update_results(results, outcome);
 			if (verbose || !outcome)
 			{
-				printf("add: (%lf, %lf) + (%lf, %lf): actual (%lf, %lf) / expected (%lf, %lf) : %s\n",
+				printf("add: (%lf, %lf) + (%lf, %lf): actual (%lf, %lf) / expected (%lf, %lf) : %s \n",
 					z0.re, z0.im, z1.re, z1.im, act.re, act.im, exp.re, exp.im, outcome ? PASS : FAIL);
 			}
 		}
@@ -58,7 +58,7 @@ void test_sub(struct result_struct* results, bool verbose)
 			update_results(results, outcome);
 			if (verbose || !outcome)
 			{
-				printf("sub: (%lf, %lf) - (%lf, %lf): actual (%lf, %lf) / expected (%lf, %lf) : %s\n",
+				printf("sub: (%lf, %lf) - (%lf, %lf): actual (%lf, %lf) / expected (%lf, %lf) : %s \n",
 					z0.re, z0.im, z1.re, z1.im, act.re, act.im, exp.re, exp.im, outcome ? PASS : FAIL);
 			}
 		}
@@ -77,7 +77,7 @@ void test_mul(struct result_struct* results, bool verbose)
 			struct complex act = mul(z0, z1);
 			struct complex exp =
 			{
-				z0.re * z1.re - z0.im * z0.im,
+				z0.re * z1.re - z0.im * z1.im,
 				z0.re * z1.im + z0.im * z1.re
 			};
 
@@ -85,7 +85,7 @@ void test_mul(struct result_struct* results, bool verbose)
 			update_results(results, outcome);
 			if (verbose || !outcome)
 			{
-				printf("mul: (%lf, %lf) * (%lf, %lf): actual (%lf, %lf) / expected (%lf, %lf) : %s\n",
+				printf("mul: (%lf, %lf) * (%lf, %lf): actual (%lf, %lf) / expected (%lf, %lf) : %s \n",
 					z0.re, z0.im, z1.re, z1.im, act.re, act.im, exp.re, exp.im, outcome ? PASS : FAIL);
 			}
 		}
@@ -105,15 +105,15 @@ void test_div(struct result_struct* results, bool verbose)
 			double denom = z1.re * z1.re + z1.im * z1.im;
 			struct complex exp =
 			{
-				(z0.re * z1.re + z0.im * z0.im) / denom,
-				(z0.re * z1.im - z0.im * z1.re) / denom
+				(z0.re * z1.re + z0.im * z1.im) / denom,
+				(z0.im * z1.re - z0.re * z1.im) / denom
 			};
 
 			bool outcome = evaluate(act, exp);
 			update_results(results, outcome);
 			if (verbose || !outcome)
 			{
-				printf("div: (%lf, %lf) / (%lf, %lf): actual (%lf, %lf) / expected (%lf, %lf) : %s\n",
+				printf("div: (%lf, %lf) / (%lf, %lf): actual (%lf, %lf) / expected (%lf, %lf) : %s \n",
 					z0.re, z0.im, z1.re, z1.im, act.re, act.im, exp.re, exp.im, outcome ? PASS : FAIL);
 			}
 		}
@@ -122,5 +122,19 @@ void test_div(struct result_struct* results, bool verbose)
 
 void test_conj(struct result_struct* results, bool verbose)
 {
+	for (int z = 0; z < SAMPLE_COUNT; ++z)
+	{
+		struct complex z0 = values[z];
 
+		struct complex act = conj(z0);
+		struct complex exp = { z0.re, -z0.im };
+
+		bool outcome = evaluate(act, exp);
+		update_results(results, outcome);
+		if (verbose || !outcome)
+		{
+			printf("conj: (%lf), (%lf) : actual (%lf), (%lf) / expected (%lf), (%lf) : %s \n",
+				z0.re, z0.im, act.re, act.im, exp.re, exp.im, outcome ? PASS : FAIL);
+		}
+	}
 }
