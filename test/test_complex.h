@@ -7,7 +7,7 @@
 /// </summary>
 /// <param name="results">Results struct to update after each test case</param>
 /// <param name="verbose">When true display the results of all test cases;
-/// when false only display thise test cases which fail.</param>
+/// when false only display this test cases which fail.</param>
 extern void test_add(struct result_struct* results, bool verbose);
 
 /// <summary>
@@ -16,7 +16,7 @@ extern void test_add(struct result_struct* results, bool verbose);
 /// </summary>
 /// <param name="results">Results struct to update after each test case</param>
 /// <param name="verbose">When true display the results of all test cases;
-/// when false only display thise test cases which fail.</param>
+/// when false only display this test cases which fail.</param>
 extern void test_sub(struct result_struct* results, bool verbose);
 
 /// <summary>
@@ -25,7 +25,7 @@ extern void test_sub(struct result_struct* results, bool verbose);
 /// </summary>
 /// <param name="results">Results struct to update after each test case</param>
 /// <param name="verbose">When true display the results of all test cases;
-/// when false only display thise test cases which fail.</param>
+/// when false only display this test cases which fail.</param>
 extern void test_mul(struct result_struct* results, bool verbose);
 
 /// <summary>
@@ -34,7 +34,7 @@ extern void test_mul(struct result_struct* results, bool verbose);
 /// </summary>
 /// <param name="results">Results struct to update after each test case</param>
 /// <param name="verbose">When true display the results of all test cases;
-/// when false only display thise test cases which fail.</param>
+/// when false only display this test cases which fail.</param>
 extern void test_div(struct result_struct* results, bool verbose);
 
 /// <summary>
@@ -43,7 +43,7 @@ extern void test_div(struct result_struct* results, bool verbose);
 /// </summary>
 /// <param name="results">Results struct to update after each test case</param>
 /// <param name="verbose">When true display the results of all test cases;
-/// when false only display thise test cases which fail.</param>
+/// when false only display this test cases which fail.</param>
 extern void test_conj(struct result_struct* results, bool verbose);
 
 /// <summary>
@@ -52,7 +52,7 @@ extern void test_conj(struct result_struct* results, bool verbose);
 /// </summary>
 /// <param name="results">Results struct to update after each test case</param>
 /// <param name="verbose">When true display the results of all test cases;
-/// when false only display thise test cases which fail.</param>
+/// when false only display this test cases which fail.</param>
 extern void test_mag2(struct result_struct* results, bool verbose);
 
 /// <summary>
@@ -61,7 +61,7 @@ extern void test_mag2(struct result_struct* results, bool verbose);
 /// </summary>
 /// <param name="results">Results struct to update after each test case</param>
 /// <param name="verbose">When true display the results of all test cases;
-/// when false only display thise test cases which fail.</param>
+/// when false only display this test cases which fail.</param>
 extern void test_mag(struct result_struct* results, bool verbose);
 
 /// <summary>
@@ -70,7 +70,7 @@ extern void test_mag(struct result_struct* results, bool verbose);
 /// </summary>
 /// <param name="results">Results struct to update after each test case</param>
 /// <param name="verbose">When true display the results of all test cases;
-/// when false only display thise test cases which fail.</param>
+/// when false only display this test cases which fail.</param>
 extern void test_arg(struct result_struct* results, bool verbose);
 
 /// <summary>
@@ -79,7 +79,7 @@ extern void test_arg(struct result_struct* results, bool verbose);
 /// </summary>
 /// <param name="results">Results struct to update after each test case</param>
 /// <param name="verbose">When true display the results of all test cases;
-/// when false only display thise test cases which fail.</param>
+/// when false only display this test cases which fail.</param>
 extern void test_from_polar(struct result_struct* results, bool verbose);
 
 #endif
