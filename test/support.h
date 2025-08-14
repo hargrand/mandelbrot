@@ -40,6 +40,15 @@ extern void update_results(struct result_struct* results, bool outcome);
 /// <param name="actual">Value to compare against the expected value</param>
 /// <param name="expected">Value that actual is expected to hold</param>
 /// <returns>True exactly when the actual value is as expected</returns>
-extern bool evaluate(struct complex actual, struct complex expected);
+extern bool evaluate_complex(struct complex actual, struct complex expected);
+
+/// <summary>
+/// Compare a complex value with its expected results and return true if and only if the two
+/// values are the same.
+/// </summary>
+/// <param name="actual">Value to compare against the expected value</param>
+/// <param name="expected">Value that actual is expected to hold</param>
+/// <returns>True exactly when the actual value is as expected</returns>
+extern bool evaluate_double(double actual, double expected);
 
 #endif

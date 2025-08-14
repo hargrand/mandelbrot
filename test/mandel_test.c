@@ -12,4 +12,5 @@ int main()
 	test_mul(&results, true);
 	test_div(&results, true);
 	test_conj(&results, true);
+	test_mag2(&results, true);
 }

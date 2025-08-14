@@ -1,6 +1,5 @@
 #include "../math/complex.h"
 #include "support.h"
-
 #include <stdbool.h>
 #include <stdio.h>
 
@@ -31,7 +30,7 @@ void test_add(struct result_struct* results, bool verbose)
 				z0.im + z1.im
 			};
 
-			bool outcome = evaluate(act, exp);
+			bool outcome = evaluate_complex(act, exp);
 			update_results(results, outcome);
 			if (verbose || !outcome)
 			{
@@ -54,7 +53,7 @@ void test_sub(struct result_struct* results, bool verbose)
 			struct complex act = sub(z0, z1);
 			struct complex exp = { z0.re - z1.re, z0.im - z1.im };
 
-			bool outcome = evaluate(act, exp);
+			bool outcome = evaluate_complex(act, exp);
 			update_results(results, outcome);
 			if (verbose || !outcome)
 			{
@@ -81,7 +80,7 @@ void test_mul(struct result_struct* results, bool verbose)
 				z0.re * z1.im + z0.im * z1.re
 			};
 
-			bool outcome = evaluate(act, exp);
+			bool outcome = evaluate_complex(act, exp);
 			update_results(results, outcome);
 			if (verbose || !outcome)
 			{
@@ -109,7 +108,7 @@ void test_div(struct result_struct* results, bool verbose)
 				(z0.im * z1.re - z0.re * z1.im) / denom
 			};
 
-			bool outcome = evaluate(act, exp);
+			bool outcome = evaluate_complex(act, exp);
 			update_results(results, outcome);
 			if (verbose || !outcome)
 			{
@@ -129,12 +128,50 @@ void test_conj(struct result_struct* results, bool verbose)
 		struct complex act = conj(z0);
 		struct complex exp = { z0.re, -z0.im };
 
-		bool outcome = evaluate(act, exp);
+		bool outcome = evaluate_complex(act, exp);
 		update_results(results, outcome);
 		if (verbose || !outcome)
 		{
 			printf("conj: (%lf), (%lf) : actual (%lf), (%lf) / expected (%lf), (%lf) : %s \n",
 				z0.re, z0.im, act.re, act.im, exp.re, exp.im, outcome ? PASS : FAIL);
+		}
+	}
+}
+
+void test_mag2(struct result_struct* results, bool verbose)
+{
+	for (int z = 0; z < SAMPLE_COUNT; ++z)
+	{
+		struct complex z0 = values[z];
+
+		double act = mag2(z0);
+		double exp = z0.re * z0.re + z0.im * z0.im;
+
+		bool outcome = evaluate_double(act, exp);
+		update_results(results, outcome);
+		if (verbose || !outcome)
+		{
+			printf("mag2: (%lf), (%lf) : actual (%lf), (%lf) / expected (%lf), (%lf) : %s \n",
+				z0.re, z0.im, act, act, exp, exp, outcome ? PASS : FAIL);
+		}
+	}
+}
+
+void test_mag(struct result_struct* results, bool verbose)
+{
+	for (int z = 0; z < SAMPLE_COUNT; ++z)
+	{
+		struct complex z0 = values[z];
+
+		double act = mag(z0);
+		double exp = sqrt(mag2(z0));
+
+		bool outcome = evaluate_double(act, exp);
+		update_results(results, outcome);
+		if (verbose || !outcome)
+		{
+			printf("mag2: (%lf), (%lf) : actual (%lf), (%lf) / expected (%lf), (%lf) : %s \n",
+				z0.re, z0.im, act, act, exp, exp, outcome ? PASS : FAIL);
 		}
 	}
 }
