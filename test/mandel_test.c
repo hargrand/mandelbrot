@@ -13,4 +13,5 @@ int main()
 	test_div(&results, true);
 	test_conj(&results, true);
 	test_mag2(&results, true);
+	test_mag(&results, true);
 }
