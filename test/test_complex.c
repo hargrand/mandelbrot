@@ -36,7 +36,11 @@ void test_add(struct result_struct* results, bool verbose)
 			if (verbose || !outcome)
 			{
 				printf("add: (%lf, %lf) + (%lf, %lf): actual (%lf, %lf) / expected (%lf, %lf) : %s \n",
-					z0.x, z0.y, z1.x, z1.y, act.x, act.y, exp.x, exp.y, outcome ? PASS : FAIL);
+					z0.x, z0.y, 
+					z1.x, z1.y, 
+					act.x, act.y, 
+					exp.x, exp.y, 
+					outcome ? PASS : FAIL);
 			}
 		}
 	}
@@ -59,7 +63,11 @@ void test_sub(struct result_struct* results, bool verbose)
 			if (verbose || !outcome)
 			{
 				printf("sub: (%lf, %lf) - (%lf, %lf): actual (%lf, %lf) / expected (%lf, %lf) : %s \n",
-					z0.x, z0.y, z1.x, z1.y, act.x, act.y, exp.x, exp.y, outcome ? PASS : FAIL);
+					z0.x, z0.y,
+					z1.x, z1.y,
+					act.x, act.y,
+					exp.x, exp.y,
+					outcome ? PASS : FAIL);
 			}
 		}
 	}
@@ -86,7 +94,11 @@ void test_mul(struct result_struct* results, bool verbose)
 			if (verbose || !outcome)
 			{
 				printf("mul: (%lf, %lf) * (%lf, %lf): actual (%lf, %lf) / expected (%lf, %lf) : %s \n",
-					z0.x, z0.y, z1.x, z1.y, act.x, act.y, exp.x, exp.y, outcome ? PASS : FAIL);
+					z0.x, z0.y,
+					z1.x, z1.y, 
+					act.x, act.y, 
+					exp.x, exp.y, 
+					outcome ? PASS : FAIL);
 			}
 		}
 	}
@@ -114,7 +126,11 @@ void test_div(struct result_struct* results, bool verbose)
 			if (verbose || !outcome)
 			{
 				printf("div: (%lf, %lf) / (%lf, %lf): actual (%lf, %lf) / expected (%lf, %lf) : %s \n",
-					z0.x, z0.y, z1.x, z1.y, act.x, act.y, exp.x, exp.y, outcome ? PASS : FAIL);
+					z0.x, z0.y, 
+					z1.x, z1.y, 
+					act.x, act.y, 
+					exp.x, exp.y, 
+					outcome ? PASS : FAIL);
 			}
 		}
 	}
@@ -134,7 +150,10 @@ void test_conj(struct result_struct* results, bool verbose)
 		if (verbose || !outcome)
 		{
 			printf("conj: (%lf), (%lf) : actual (%lf), (%lf) / expected (%lf), (%lf) : %s \n",
-				z0.x, z0.y, act.x, act.y, exp.x, exp.y, outcome ? PASS : FAIL);
+				z0.x, z0.y, 
+				act.x, act.y, 
+				exp.x, exp.y, 
+				outcome ? PASS : FAIL);
 		}
 	}
 }
@@ -153,7 +172,9 @@ void test_mag2(struct result_struct* results, bool verbose)
 		if (verbose || !outcome)
 		{
 			printf("mag2: (%lf), (%lf) : actual (%lf) / expected (%lf) : %s \n",
-				z0.x, z0.y, act, exp, outcome ? PASS : FAIL);
+				z0.x, z0.y, 
+				act, exp, 
+				outcome ? PASS : FAIL);
 		}
 	}
 }
@@ -172,7 +193,57 @@ void test_mag(struct result_struct* results, bool verbose)
 		if (verbose || !outcome)
 		{
 			printf("mag: (%lf), (%lf) : actual (%lf) / expected (%lf) : %s \n",
-				z0.x, z0.y, act, exp, outcome ? PASS : FAIL);
+				z0.x, z0.y, 
+				act, exp, 
+				outcome ? PASS : FAIL);
 		}
+	}
+}
+
+void test_arg(struct result_struct* results, bool verbose)
+{
+	for (int z = 0; z < SAMPLE_COUNT; ++z)
+	{
+		struct complex z0 = values[z];
+
+		double act = complex_arg(z0);
+		double exp = atan2(z0.y, z0.x);
+
+		bool outcome = act == exp;
+		update_results(results, outcome);
+		if (verbose || !outcome)
+		{
+			printf("arg: (%lf), (%lf) : actual (%lf) / expected (%lf) : %s \n",
+				z0.x, z0.y, 
+				act, exp, 
+				outcome ? PASS : FAIL);
+		}
+	}
+}
+
+void test_from_polar(struct result_struct* results, bool verbose)
+{
+	for (int z = 0; z < SAMPLE_COUNT; ++z)
+	{
+		struct complex z0 = values[z];
+		
+		double mag = complex_mag(z0);
+		double arg = complex_arg(z0);
+
+		struct complex act = complex_from_polar(arg, mag);
+		struct complex exp = { cos(arg) * mag, sin(arg) * mag };
+
+		bool outcome = evaluate_complex(act, exp);
+		update_results(results, outcome);
+		if (verbose || !outcome)
+		{
+			printf("from_polar: (%lf), (%lf), mag: (%lf), arg: (%lf) : actual (%lf), (%lf) / expected (%lf), (%lf) : %s \n",
+				z0.x, z0.y,
+				mag, arg,
+				act.x, act.y,
+				exp.x, exp.y,
+				outcome ? PASS : FAIL);
+		}
+		
 	}
 }

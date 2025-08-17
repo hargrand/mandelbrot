@@ -14,4 +14,6 @@ int main()
 	test_conj(&results, true);
 	test_mag2(&results, true);
 	test_mag(&results, true);
+	test_arg(&results, true);
+	test_from_polar(&results, true);
 }

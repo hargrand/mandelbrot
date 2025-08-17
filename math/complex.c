@@ -66,7 +66,7 @@ struct complex complex_from_polar(double arg, double mag)
 	// Polar Form:
 	// z = mag * (cos(theta) + (im * sin(theta)))
 
-	struct complex return_value = { cos(arg) * mag , sin(arg) * mag};
+	struct complex return_value = { cos(arg) * mag , sin(arg) * mag };
 
 	return return_value;
 }
