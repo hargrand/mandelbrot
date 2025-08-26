@@ -12,7 +12,7 @@ void update_results(struct result_struct* results, bool outcome)
 	}
 }
 
-bool evalutate(struct complex actual, struct complex expected)
+bool evaluate_complex(struct complex actual, struct complex expected)
 {
-	return actual.re == expected.re && actual.im == expected.im;
+	return actual.x == expected.x && actual.y == expected.y;
 }
