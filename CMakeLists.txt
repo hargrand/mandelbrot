@@ -8,7 +8,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
 
 # Add test subdirectory
-add_subdirectory(math)
+add_subdirectory(image_generator)
 add_subdirectory(test)
 
 # Main program
