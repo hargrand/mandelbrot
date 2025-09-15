@@ -11,7 +11,7 @@ if(MSVC)
 endif()
 
 # Link with any libraries if needed (optional)
-target_link_libraries(mandel_tests math)
+target_link_libraries(mandel_tests image_generator)
 
 # Add the test to CTest
 add_test(NAME c_mandel_tests COMMAND mandel_tests)
