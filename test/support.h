@@ -2,7 +2,7 @@
 #ifndef TEST_SUPPORT_H
 #define TEST_SUPPORT_H
 
-#include "../math/complex.h"
+#include "../image_generator/complex.h"
 
 #include <stdbool.h>
 
