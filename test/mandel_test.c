@@ -1,13 +1,14 @@
 #include "support.h"
 #include "test_complex.h"
+#include "test_mandelbrot.h"
 
 #include <stdbool.h>
 
 int main()
 {
-	struct result_struct results = { 0, 0 };
-
 	// From test_complex
+	struct result_struct results = { 0, 0 };
+	
 	test_add(&results, true);
 	test_sub(&results, true);
 	test_mul(&results, true);

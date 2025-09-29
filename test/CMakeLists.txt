@@ -3,7 +3,8 @@ add_executable(
     mandel_tests
     support.c
     test_complex.c
-    mandel_test.c "test_mandelbrot.h" "test_mandelbrot.c")
+    mandel_test.c 
+    test_mandelbrot.c)
 
 # Enable strict compilation for tests too
 if(MSVC)
