@@ -1,4 +1,4 @@
-#include "../image_generator/complex.h"
+#include "../image_generator/complex_math.h"
 #include "support.h"
 #include <stdbool.h>
 #include <stdio.h>

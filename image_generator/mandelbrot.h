@@ -1,7 +1,7 @@
-#ifndef MANDELBROT
-#define MANDELBROT
+#ifndef MANDELBROT_H
+#define MANDELBROT_H
 
-#include <complex.h>
+#include "complex_math.h"
 
 /// <summary>
 /// Determines if the value is in the Mandelbrot set
@@ -12,5 +12,8 @@
 /// valid Mandelbrot set value</param>
 /// <returns>Number of iterations</returns>
 extern unsigned int mandelbrot(struct complex z, struct complex c, unsigned int max_i);
+
+// Generate the PNG; returns 0 on success
+int generate_mandelbrot_image(const char* out_path);
 
 #endif

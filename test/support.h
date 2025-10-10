@@ -1,10 +1,10 @@
-
 #ifndef TEST_SUPPORT_H
 #define TEST_SUPPORT_H
 
-#include "../image_generator/complex.h"
+#include "../image_generator/complex_math.h"
 
 #include <stdbool.h>
+#include <stdio.h>
 
 #define PASS "\x1B[32mPASS\x1B[0m"
 #define FAIL "\x1B[31mFAIL\x1B[0m"
