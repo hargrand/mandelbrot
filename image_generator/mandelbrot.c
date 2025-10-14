@@ -23,39 +23,44 @@ unsigned int mandelbrot(struct complex z, struct complex c, unsigned int max_i)
 }
 
 // PNG Helpers
+
+// write_png_rgb8 handles all the fiole I/O and PNG encoding work with libpng.
+// Essentially, this helper converts pixel rows into a .png file.
 static void write_png_rgb8(
     const char* filename,
     int width,
     int height,
-    void (*fill_row)(uint8_t* row, int y, int width))
+    void (*fill_row)(uint8_t* row, int y, int width)) // This is confusing to me
 {
-    FILE* fp = fopen(filename, "wb");
+    FILE* fp = fopen(filename, "wb");  // Opens output file in write binary (wb) mode
 
-    png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-    png_infop info_ptr = png_create_info_struct(png_ptr);
-    png_init_io(png_ptr, fp);
+    png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL); // This is confusing to me
+    png_infop info_ptr = png_create_info_struct(png_ptr); // info_ptr stores metadata (width, height, etc.)
+    png_init_io(png_ptr, fp); // png_init_io tells libpng to write to the file
     png_set_IHDR(
         png_ptr, info_ptr,
         (png_uint_32)width, (png_uint_32)height,
-        8,                      // bit depth
-        PNG_COLOR_TYPE_RGB,     // RGB8
+        8,                      // bits per color channel
+        PNG_COLOR_TYPE_RGB,     // RGB color mode
         PNG_INTERLACE_NONE,
         PNG_COMPRESSION_TYPE_DEFAULT,
         PNG_FILTER_TYPE_DEFAULT);
 
-    png_write_info(png_ptr, info_ptr);
+    png_write_info(png_ptr, info_ptr); // PNG file now knows its basic parameters
 
-    uint8_t* row = (uint8_t*)malloc((size_t)width * 3);
+    uint8_t* row = (uint8_t*)malloc((size_t)width * 3); // Temporary array that holds pixel values for one image row 
+                                                        // before writing it out. Each pixel has 3 bytes (R, G, B).
 
+    // This for loop covers fill_row_mandelbrot
     for (int y = 0; y < height; ++y) {
         fill_row(row, y, width);
-        png_write_row(png_ptr, row);
+        png_write_row(png_ptr, row); // Writes each row into the PNG file
     }
 
-    free(row);
-    png_write_end(png_ptr, info_ptr);
-    png_destroy_write_struct(&png_ptr, &info_ptr);
-    fclose(fp);
+    free(row); // Frees memory
+    png_write_end(png_ptr, info_ptr); 
+    png_destroy_write_struct(&png_ptr, &info_ptr); // Destroys libpng state
+    fclose(fp); // Closes file
 }
 
 // Image parameters & coloring
@@ -73,7 +78,7 @@ static struct complex pixel_to_complex(int x, int y)
     return c;
 }
 
-// Blue→Black ramp: exterior lighter, interior black
+// Converts the iteration count from the Mandelbrot formula into a shade of blue
 static inline uint8_t blue_from_iters(unsigned int iters)
 {
     if (iters >= MAX_ITERS) return 0; // in-set to black
