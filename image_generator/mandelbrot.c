@@ -2,9 +2,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
-
 #include "mandelbrot.h"
 #include "complex_math.h"
+
+// ---------- Mandelbrot core ----------
 
 static struct complex iterate(struct complex z, struct complex c)
 {
@@ -28,135 +29,134 @@ unsigned int mandelbrot(struct complex z, struct complex c, unsigned int max_i)
 // Essentially, this helper converts pixel rows into a .png file.
 
 static void write_png_rgb8(
-    const char* filename, // * is a memory address
+    const char* filename,
     int width,
     int height,
-    void (*fill_row)(uint8_t* row, int y, int width))
+    void (*fill_row)(uint8_t* row, int y, int width, void* ctx),
+    void* ctx)
 {
-    FILE* fp = NULL;    // Opens output file in write binary (wb) mode
-    png_structp png_ptr = NULL;
-    png_infop info_ptr = NULL; // info_ptr stores metadata (width, height, etc.)
-    uint8_t* row = NULL;
-
-    fp = fopen(filename, "wb");
+    FILE* fp = fopen(filename, "wb");
     if (!fp) {
         fprintf(stderr, "Error: Could not open '%s' for writing.\n", filename);
-        goto cleanup;
+        return;
     }
 
-    png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-    if (!png_ptr) {
-        fprintf(stderr, "Error: Could not allocate PNG write struct.\n");
-        goto cleanup;
-    }
-
-    info_ptr = png_create_info_struct(png_ptr);
-    if (!info_ptr) {
-        fprintf(stderr, "Error: Could not allocate PNG info struct.\n");
-        goto cleanup;
+    png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    png_infop info_ptr = png_create_info_struct(png_ptr);
+    if (!png_ptr || !info_ptr) {
+        fprintf(stderr, "Error: Could not allocate PNG structs.\n");
+        fclose(fp);
+        return;
     }
 
     if (setjmp(png_jmpbuf(png_ptr))) {
-        fprintf(stderr, "Error: libpng encountered a problem during writing.\n");
-        goto cleanup;
+        fprintf(stderr, "Error: libpng encountered a problem.\n");
+        png_destroy_write_struct(&png_ptr, &info_ptr);
+        fclose(fp);
+        return;
     }
 
     png_init_io(png_ptr, fp); // png_init_io tells libpng to write to the file
     png_set_IHDR(
         png_ptr, info_ptr,
         (png_uint_32)width, (png_uint_32)height,
-        8,                      // bits per color channel
-        PNG_COLOR_TYPE_RGB,     // RGB color mode
+        8,                  // bits per color channel
+        PNG_COLOR_TYPE_RGB, // RGB color mode
         PNG_INTERLACE_NONE,
-        PNG_COMPRESSION_TYPE_DEFAULT,
+        PNG_COMPRESSION_TYPE_DEFAULT, 
         PNG_FILTER_TYPE_DEFAULT);
 
-    png_write_info(png_ptr, info_ptr);  // PNG file now knows its basic parameters
+    png_write_info(png_ptr, info_ptr); // PNG file now knows its basic parameters
 
-    row = (uint8_t*)malloc((size_t)width * 3); // Temporary array that holds pixel values for one image row 
-                                               // before writing it out. Each pixel has 3 bytes (R, G, B).
-    if (!row) {
-        fprintf(stderr, "Error: Could not allocate row buffer.\n");
-        goto cleanup;
-    }
-
+    uint8_t* row = (uint8_t*)malloc((size_t)width * 3); // Temporary array that holds pixel values for one image row 
+                                                        // before writing it out. Each pixel has 3 bytes (R, G, B).
     for (int y = 0; y < height; ++y) {
-        fill_row(row, y, width);
+        (*fill_row)(row, y, width, ctx);
         png_write_row(png_ptr, row);
     }
+    free(row);
 
     png_write_end(png_ptr, info_ptr);
-
-cleanup:
-    if (row) free(row);
-    if (png_ptr && info_ptr)
-        png_destroy_write_struct(&png_ptr, &info_ptr);
-    else if (png_ptr)
-        png_destroy_write_struct(&png_ptr, NULL);
-
-    if (fp) fclose(fp);
-}
-
-// ---------- Image parameters ----------
-
-enum { IMG_W = 2560, IMG_H = 2560 };      // Resolution, multiples of MAX_ITERS
-static const double MIN_RE = -2.0, MAX_RE = 2.0;
-static const double MIN_IM = -2.0, MAX_IM = 2.0;
-static const unsigned int MAX_ITERS = 256;
-
-// ---------- Complex mapping ----------
-
-// Map pixel (x,y) -> complex c in the target region 
-static struct complex pixel_to_complex(int x, int y)
-{
-    double re = MIN_RE + (MAX_RE - MIN_RE) * ((double)x / (IMG_W - 1));
-    double im = MAX_IM - (MAX_IM - MIN_IM) * ((double)y / (IMG_H - 1)); // top to bottom
-    struct complex c = { re, im };
-    return c;
+    png_destroy_write_struct(&png_ptr, &info_ptr);
+    fclose(fp);
 }
 
 // ---------- Coloring ----------
 
 // Converts the iteration count from the Mandelbrot formula into a shade of blue
-static inline uint8_t blue_from_iters(unsigned int iters)
+static inline uint8_t blue_from_iters(unsigned int iters, unsigned int max_iters)
 {
-    if (iters >= MAX_ITERS) return 0; // in-set to black
-    // Map 0..(MAX_ITERS-1) to 255..~0 (lighter → darker)
-    return (uint8_t)(255 - (255u * iters) / (MAX_ITERS - 1));
+    if (iters >= max_iters) return 0;
+    return (uint8_t)(255 - (255u * iters) / (max_iters - 1));
 }
+
 
 // ---------- Row filler ----------
 
-// Row filler that computes Mandelbrot and writes RGB bytes
-static void fill_row_mandelbrot(uint8_t* row, int y, int width)
-{
-    (void)width; // fixed 256 in this program
-    for (int x = 0; x < IMG_W; ++x) {
-        struct complex c = pixel_to_complex(x, y);
-        struct complex z0 = { 0.0, 0.0 };
-        unsigned int it = mandelbrot(z0, c, MAX_ITERS);
-        uint8_t b = blue_from_iters(it);
+struct fractal_cfg {
+    double min_re, max_re;
+    double min_im, max_im;
+    unsigned int max_iters;
+    int w, h;
+};
 
-        // Simple rainbow banding
-        uint8_t shade = (uint8_t)(255 - (255u * it) / (MAX_ITERS - 1));
-        row[3 * x + 0] = (uint8_t)((shade * 5) % 256);  // R cycles
-        row[3 * x + 1] = (uint8_t)((shade * 7) % 256);  // G cycles
-        row[3 * x + 2] = (uint8_t)((shade * 11) % 256); // B cycles
+// Row filler that computes Mandelbrot and writes RGB bytes
+static void fill_row_mandelbrot(uint8_t* row, int y, int width, void* ctx)
+{
+    struct fractal_cfg* cfg = (struct fractal_cfg*)ctx;
+
+    for (int x = 0; x < cfg->w; ++x) {
+        double re = cfg->min_re + (cfg->max_re - cfg->min_re) * ((double)x / (cfg->w - 1));
+        double im = cfg->max_im - (cfg->max_im - cfg->min_im) * ((double)y / (cfg->h - 1));
+        struct complex c = { re, im };
+        struct complex z0 = { 0.0, 0.0 };
+        unsigned int it = mandelbrot(z0, c, cfg->max_iters);
+
+        uint8_t shade = (uint8_t)(255 - (255u * it) / (cfg->max_iters - 1));
+        row[3 * x + 0] = (shade * 5) % 256;  // R
+        row[3 * x + 1] = (shade * 7) % 256;  // G
+        row[3 * x + 2] = (shade * 11) % 256; // B
 
         // // Simple black to blue gradient
+        // uint8_t b = blue_from_iters(it, cfg->max_iters);
         // row[3 * x + 0] = 0; // R
         // row[3 * x + 1] = 0; // G
         // row[3 * x + 2] = b; // B
 
-
     }
 }
 
-// ---------- Public entry point ----------
+// ---------- Custom generator ----------
 
-int generate_mandelbrot_image(const char* out_path) 
+int generate_mandelbrot_image_custom(
+    const char* out_path,
+    double min_re, double max_re,
+    double min_im, double max_im,
+    unsigned int max_iters,
+    int img_w, int img_h)
 {
-    if (!out_path) out_path = "../../renders/mandelbrot.png";
-    write_png_rgb8(out_path, IMG_W, IMG_H, fill_row_mandelbrot);
+    if (!out_path) out_path = "mandelbrot.png";
+
+    struct fractal_cfg cfg = {
+        .min_re = min_re, .max_re = max_re,
+        .min_im = min_im, .max_im = max_im,
+        .max_iters = max_iters,
+        .w = img_w, .h = img_h
+    };
+
+    write_png_rgb8(out_path, img_w, img_h, fill_row_mandelbrot, &cfg);
     return 0;
+}
+
+// ---------- Default wrapper ----------
+
+int generate_mandelbrot_image_default(const char* out_path)
+{
+    const double MIN_RE = -2.0, MAX_RE = 2.0;
+    const double MIN_IM = -2.0, MAX_IM = 2.0;
+    const unsigned int MAX_ITERS = 256;
+    const int IMG_W = 256, IMG_H = 256;
+
+    return generate_mandelbrot_image_custom(
+        out_path, MIN_RE, MAX_RE, MIN_IM, MAX_IM, MAX_ITERS, IMG_W, IMG_H);
 }

@@ -14,6 +14,15 @@
 extern unsigned int mandelbrot(struct complex z, struct complex c, unsigned int max_i);
 
 // Generate the PNG; returns 0 on success
-int generate_mandelbrot_image(const char* out_path);
+int generate_mandelbrot_image_default(const char* out_path);
+
+// Generate the PNG with args
+int generate_mandelbrot_image_custom(
+    const char* out_path,
+    double min_re, double max_re,
+    double min_im, double max_im,
+    unsigned int max_iters,
+    int img_w, int img_h
+);
 
 #endif
