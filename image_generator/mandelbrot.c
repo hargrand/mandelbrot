@@ -117,12 +117,6 @@ static void fill_row_mandelbrot(uint8_t* row, int y, int width, void* ctx)
         row[3 * x + 1] = (shade * 7) % 256;  // G
         row[3 * x + 2] = (shade * 11) % 256; // B
 
-        // // Simple black to blue gradient
-        // uint8_t b = blue_from_iters(it, cfg->max_iters);
-        // row[3 * x + 0] = 0; // R
-        // row[3 * x + 1] = 0; // G
-        // row[3 * x + 2] = b; // B
-
     }
 }
 
@@ -148,15 +142,70 @@ int generate_mandelbrot_image_custom(
     return 0;
 }
 
-// ---------- Default wrapper ----------
+// ---------- Parsing args ----------
 
-int generate_mandelbrot_image_default(const char* out_path)
+int parse_mandelbrot_args(int argc, char* argv[], struct mandelbrot_config* cfg)
 {
-    const double MIN_RE = -2.0, MAX_RE = 2.0;
-    const double MIN_IM = -2.0, MAX_IM = 2.0;
-    const unsigned int MAX_ITERS = 256;
-    const int IMG_W = 256, IMG_H = 256;
+    // Set defaults
+    cfg->min_re = -2.0;
+    cfg->max_re = 2.0;
+    cfg->min_im = -2.0;
+    cfg->max_im = 2.0;
+    cfg->max_iters = 256;
+    cfg->img_w = 256;
+    cfg->img_h = 256;
+    cfg->out_file = "mandelbrot.png";
 
-    return generate_mandelbrot_image_custom(
-        out_path, MIN_RE, MAX_RE, MIN_IM, MAX_IM, MAX_ITERS, IMG_W, IMG_H);
+    // If no args are passed, main.c will run default generation
+    if (argc == 1) {
+        printf("No arguments given - using default Mandelbrot settings.\n");
+    }
+
+    // Parse CLI args
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "-region") == 0 && i + 4 < argc) {
+            cfg->min_re = atof(argv[++i]);
+            cfg->max_re = atof(argv[++i]);
+            cfg->min_im = atof(argv[++i]);
+            cfg->max_im = atof(argv[++i]);
+        }
+        else if (strcmp(argv[i], "-iters") == 0 && i + 1 < argc) {
+            cfg->max_iters = (unsigned int)atoi(argv[++i]);
+        }
+        else if (strcmp(argv[i], "-res") == 0 && i + 2 < argc) {
+            cfg->img_w = atoi(argv[++i]);
+            cfg->img_h = atoi(argv[++i]);
+        }
+        else if (strcmp(argv[i], "-out") == 0 && i + 1 < argc) {
+            cfg->out_file = argv[++i];
+        }
+        else if (strcmp(argv[i], "-help") == 0) {
+            printf("Usage:\n");
+            printf("  mandelbrot.exe [options]\n\n");
+            printf("Options:\n");
+            printf("  -region <minRe> <maxRe> <minIm> <maxIm>\n");
+            printf("  -res <width> <height>\n");
+            printf("  -iters <n>\n");
+            printf("  -out <filename>\n");
+            printf("  -help\n");
+            return 1;  // Signal "help printed"
+        }
+        else {
+            fprintf(stderr, "Unknown argument: %s\n", argv[i]);
+            printf("Use -help for usage information.\n");
+            return -1;
+        }
+    }
+
+    // Print full config summary
+    printf("Generating Mandelbrot image...\n");
+    printf("Region: Re[%.3f, %.3f], Im[%.3f, %.3f]\n",
+        cfg->min_re, cfg->max_re, cfg->min_im, cfg->max_im);
+    printf("Resolution: %dx%d\n", cfg->img_w, cfg->img_h);
+    printf("Max Iterations: %u\n", cfg->max_iters);
+    printf("Output: %s\n", cfg->out_file);
+
+    return 0;
 }
+
+
